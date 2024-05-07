@@ -1,13 +1,14 @@
+
 import dash
-from dash import dcc  # dash core components
-from dash import html # dash html components
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output
 import psycopg2
-from dotenv import load_dotenv # pip install python-dotenv
+from dotenv import load_dotenv
 import os
-import psycopg2
 import pandas.io.sql as sqlio
 import plotly.express as px
+import joblib
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -30,6 +31,7 @@ print(USER)
 print(PASSWORD)
 print(HOST)
 print(PORT)
+
 titulo_style = {
     'font-family': 'Jomolhari',
     'font-style': 'normal',
@@ -194,13 +196,6 @@ tab1_layout = html.Div([
     ], style={'textAlign': 'center'})
 ])
 
-
-tab2_layout = html.Div([
-
-    ]
-)
-
-
 @app.callback(
     Output(component_id='bar-chart', component_property='figure'),
     Input(component_id='aspecto', component_property='value')
@@ -260,6 +255,352 @@ def update_output_grafico(aspecto):
 
     return gr
 
+
+
+#############################################################################################################
+#################################### Modelo Predictivo#######################################################
+#############################################################################################################
+
+model = joblib.load('modelo/modelo.pkl')
+
+tab2_layout = html.Div([
+
+    ##################### GRUPO 1
+    html.Div([
+        html.Div([
+            html.Div([
+                html.Div('Seleccione a qué genero pertenece', style={'font-size':'20px', 'font-weight': 'normal', 'textAlign': 'center'}),
+            ], style={'margin': '20px'}),
+            html.Div([
+                dcc.Dropdown(id='sexo', value='Genero', options=['Male', 'Female'], style ={'width': '450px'})
+            ], style={'margin': '20px'}),
+        ], style={'display': 'inline-block'}),
+
+        html.Div([
+            html.Div([
+                html.Div('Seleccione un grado de educación', style={'font-size':'20px', 'font-weight': 'normal', 'textAlign': 'center'}),
+            ], style={'margin': '20px'}),
+            html.Div([
+                dcc.Dropdown(id='educacion', value='Nivel Educativo', options=['Graduate School', 'University', 'High School', 'Others'], style ={'width': '450px'})
+            ], style={'margin': '20px'}),
+        ], style={'display': 'inline-block'}),
+
+        html.Div([
+            html.Div([
+                html.Div('Seleccione su estado civil', style={'font-size':'20px', 'font-weight': 'normal', 'textAlign': 'center'}),
+            ], style={'margin': '20px'}),
+            html.Div([
+                dcc.Dropdown(id='estado_civil', value='Estado Civil', options=['Married', 'Single', 'Others'], style ={'width': '450px'})
+            ], style={'margin': '20px'}),
+        ], style={'display': 'inline-block'}),
+    ], style={'display': 'flex', 'flexDirection': 'row'}),
+
+    ##################### GRUPO 2
+
+    html.Div([
+        html.Div([
+            html.Div([
+                html.Div('Ingrese su edad', style={'font-size':'20px', 'font-weight': 'normal', 'textAlign': 'center'})
+            ], style={'margin': '20px'}),
+            html.Div([
+                dcc.Input(id='edad', type='number', placeholder='Edad', style={'width': '450px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'})
+            ], style={'margin': '20px'}),
+        ]),
+        html.Div([
+            html.Div([
+                html.Div('Ingrese el valor del crédito', style={'font-size':'20px', 'font-weight': 'normal', 'textAlign': 'center'})
+            ], style={'margin': '20px'}),
+            html.Div([
+                dcc.Input(id='valor_credito', type='number', placeholder='Valor Crédito', style={'width': '450px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'})
+            ], style={'margin': '20px'}),
+        ]),
+
+    ], style={'display': 'flex', 'flexDirection': 'row', 'justifyContent': 'center'}),
+
+
+    ##################### GRUPO 3
+
+    html.Div([
+        html.Div('Seleccione su historial de pago de los últimos seis meses', style={'font-size':'20px', 'font-weight': 'normal', 'textAlign': 'center'})
+    ]),
+    html.Br(),
+    html.Div([
+        dcc.Dropdown(id='pay1', value='Historial de Pago',
+                     options=['Pago Anticipado', 'Pago a tiempo',
+                              'Pago atrasado', '1 Mes de Retraso',
+                              '2 Meses de Retraso', '3 Meses de Retraso',
+                              '4 Meses de Retraso', '5 Meses de Retraso',
+                              '6 Meses de Retraso', '7 Meses de Retraso',
+                              '8 Meses de Retraso',
+                              ],
+                     style={'display': 'inline-block', 'width':'190px', 'margin-right': '30px'}
+                     ),
+        dcc.Dropdown(id='pay2', value='Historial de Pago',
+                     options=['Pago Anticipado', 'Pago a tiempo',
+                              'Pago atrasado', '1 Mes de Retraso',
+                              '2 Meses de Retraso', '3 Meses de Retraso',
+                              '4 Meses de Retraso', '5 Meses de Retraso',
+                              '6 Meses de Retraso', '7 Meses de Retraso',
+                              '8 Meses de Retraso',
+                              ],
+                     style={'display': 'inline-block', 'width':'190px', 'margin-right': '30px'}
+                     ),
+        dcc.Dropdown(id='pay3', value='Historial de Pago',
+                     options=['Pago Anticipado', 'Pago a tiempo',
+                              'Pago atrasado', '1 Mes de Retraso',
+                              '2 Meses de Retraso', '3 Meses de Retraso',
+                              '4 Meses de Retraso', '5 Meses de Retraso',
+                              '6 Meses de Retraso', '7 Meses de Retraso',
+                              '8 Meses de Retraso',
+                              ],
+                     style={'display': 'inline-block', 'width':'190px', 'margin-right': '30px'}
+                     ),
+        dcc.Dropdown(id='pay4', value='Historial de Pago',
+                     options=['Pago Anticipado', 'Pago a tiempo',
+                              'Pago atrasado', '1 Mes de Retraso',
+                              '2 Meses de Retraso', '3 Meses de Retraso',
+                              '4 Meses de Retraso', '5 Meses de Retraso',
+                              '6 Meses de Retraso', '7 Meses de Retraso',
+                              '8 Meses de Retraso',
+                              ],
+                     style={'display': 'inline-block', 'width':'190px', 'margin-right': '30px'}
+                     ),
+        dcc.Dropdown(id='pay5', value='Historial de Pago',
+                     options=['Pago Anticipado', 'Pago a tiempo',
+                              'Pago atrasado', '1 Mes de Retraso',
+                              '2 Meses de Retraso', '3 Meses de Retraso',
+                              '4 Meses de Retraso', '5 Meses de Retraso',
+                              '6 Meses de Retraso', '7 Meses de Retraso',
+                              '8 Meses de Retraso',
+                              ],
+                     style={'display': 'inline-block', 'width':'190px', 'margin-right': '30px'}
+                     ),
+        dcc.Dropdown(id='pay6', value='Historial de Pago',
+                     options=['Pago Anticipado', 'Pago a tiempo',
+                              'Pago atrasado', '1 Mes de Retraso',
+                              '2 Meses de Retraso', '3 Meses de Retraso',
+                              '4 Meses de Retraso', '5 Meses de Retraso',
+                              '6 Meses de Retraso', '7 Meses de Retraso',
+                              '8 Meses de Retraso',
+                              ],
+                     style={'display': 'inline-block', 'width':'190px', 'margin-right': '30px'}
+                     ), 
+    ], style={'textAlign': 'center'}),
+    html.Br(),
+
+
+    ##################### GRUPO 4
+
+    html.Div([
+        html.Div('Ingrese el estado de cuenta del monto de la factura de los ultimos seis meses', style={'font-size':'20px', 'font-weight': 'normal', 'textAlign': 'center'})
+    ]),
+    html.Br(),
+    html.Div([
+        dcc.Input(id = 'bill1', type='number', placeholder='Cantidad de la Cuenta', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+        dcc.Input(id = 'bill2', type='number', placeholder='Cantidad de la Cuenta', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+        dcc.Input(id = 'bill3', type='number', placeholder='Cantidad de la Cuenta', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+        dcc.Input(id = 'bill4', type='number', placeholder='Cantidad de la Cuenta', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+        dcc.Input(id = 'bill5', type='number', placeholder='Cantidad de la Cuenta', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+        dcc.Input(id = 'bill6', type='number', placeholder='Cantidad de la Cuenta', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+    ], style={'textAlign': 'center'}),
+    html.Br(),
+
+    ##################### GRUPO 5
+
+    html.Div([
+        html.Div('Ingrese la cantidad de los pagos previos realizados en los ultimos seis meses', style={'font-size':'20px', 'font-weight': 'normal', 'textAlign': 'center'})
+    ]),
+    html.Br(),
+    html.Div([
+        dcc.Input(id = 'paya1', type='number', placeholder='Cantidad Pago Previo', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+        dcc.Input(id = 'paya2', type='number', placeholder='Cantidad Pago Previo', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+        dcc.Input(id = 'paya3', type='number', placeholder='Cantidad Pago Previo', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+        dcc.Input(id = 'paya4', type='number', placeholder='Cantidad Pago Previo', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+        dcc.Input(id = 'paya5', type='number', placeholder='Cantidad Pago Previo', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+        dcc.Input(id = 'paya6', type='number', placeholder='Cantidad Pago Previo', style={'display': 'inline-block', 'width':'180px', 'margin-right': '30px', 'height': '25px', 'borderRadius': '5px', 'borderColor': '#CCCCCC'}),
+    ], style={'textAlign': 'center'}),
+    html.Br(),
+    html.Br(),
+
+    html.Div(
+        dcc.Graph(
+            id='resultado_del_modelo'
+        )
+    )
+
+])
+
+
+
+def validar_valor(valor):
+    if valor is None or valor == '':
+        return None
+
+    try:
+        valor = float(valor)
+    except ValueError:
+        return None
+
+    return valor
+
+def validar_seleccion(seleccion, opciones):
+    if seleccion not in opciones:
+        return None
+
+    return seleccion
+
+@app.callback(
+    Output(component_id='resultado_del_modelo', component_property= 'figure'),
+    [Input(component_id='valor_credito', component_property='value'),
+     Input(component_id='sexo', component_property='value'),
+     Input(component_id='educacion', component_property='value'),
+     Input(component_id='estado_civil', component_property='value'),
+     Input(component_id='edad', component_property='value'),
+     Input(component_id='pay1', component_property='value'),
+     Input(component_id='pay2', component_property='value'),
+     Input(component_id='pay3', component_property='value'),
+     Input(component_id='pay4', component_property='value'),
+     Input(component_id='pay5', component_property='value'),
+     Input(component_id='pay6', component_property='value'),
+     Input(component_id='bill1', component_property='value'),
+     Input(component_id='bill2', component_property='value'),
+     Input(component_id='bill3', component_property='value'),
+     Input(component_id='bill4', component_property='value'),
+     Input(component_id='bill5', component_property='value'),
+     Input(component_id='bill6', component_property='value'),
+     Input(component_id='paya1', component_property='value'),
+     Input(component_id='paya2', component_property='value'),
+     Input(component_id='paya3', component_property='value'),
+     Input(component_id='paya4', component_property='value'),
+     Input(component_id='paya5', component_property='value'),
+     Input(component_id='paya6', component_property='value')]
+)
+def resultados_modelo(valor_credito, sexo, educacion, estado_civil,edad,
+                      pay1,pay2,pay3,pay4,pay5,pay6,bill1,bill2,bill3,
+                      bill4,bill5,bill6,paya1,paya2,paya3,paya4,paya5,paya6):
+    
+    valor_credito = validar_valor(valor_credito)
+    edad = validar_valor(edad)
+    bill1 = validar_valor(bill1)
+    bill2 = validar_valor(bill2)
+    bill3 = validar_valor(bill3)
+    bill4 = validar_valor(bill4)
+    bill5 = validar_valor(bill5)
+    bill6 = validar_valor(bill6)
+    paya1 = validar_valor(paya1)
+    paya2 = validar_valor(paya2)
+    paya3 = validar_valor(paya3)
+    paya4 = validar_valor(paya4)
+    paya5 = validar_valor(paya5)
+    paya6 = validar_valor(paya6)
+
+    opciones_sexo = ['Male', 'Female']
+    opciones_educacion = ['Graduate School', 'University', 'High School', 'Others']
+    opciones_estado_civil = ['Married', 'Single', 'Others']
+    opciones_hist_pagos = ['Pago Anticipado', 'Pago a tiempo', 'Pago atrasado', 
+                           '1 Mes de Retraso', '2 Meses de Retraso', '3 Meses de Retraso',
+                           '4 Meses de Retraso', '5 Meses de Retraso', '6 Meses de Retraso',
+                           '7 Meses de Retraso', '8 Meses de Retraso']
+
+    sexo = validar_seleccion(sexo, opciones_sexo)
+    educacion = validar_seleccion(educacion, opciones_educacion)
+    estado_civil = validar_seleccion(estado_civil, opciones_estado_civil)
+    pay1 = validar_seleccion(pay1, opciones_hist_pagos)
+    pay2 = validar_seleccion(pay2, opciones_hist_pagos)
+    pay3 = validar_seleccion(pay3, opciones_hist_pagos)
+    pay4 = validar_seleccion(pay4, opciones_hist_pagos)
+    pay5 = validar_seleccion(pay5, opciones_hist_pagos)
+    pay6 = validar_seleccion(pay6, opciones_hist_pagos)
+
+    if None in (valor_credito, sexo, educacion, estado_civil, edad, 
+                pay6, pay5, pay4, pay3, pay2, pay1,
+                bill6, bill5, bill4, bill3, bill2, bill1,
+                paya6, paya5, paya4, paya3, paya2, paya1):
+        string = "Por favor, ingrese valores válidos en todos los campos."
+        fig = px.scatter()
+        fig.update_layout(
+            showlegend=False,
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            annotations=[
+                dict(
+                    x=0.5,
+                    y=0.5,
+                    xref="paper",
+                    yref="paper",
+                    text=string,
+                    font=dict(size=50, color='black', family='Jomolhari'),
+                    showarrow=False,
+                )
+            ],
+            plot_bgcolor='white',
+            margin = dict(t=0, b=10, l=10, r=10),
+            height = 130
+        )
+
+
+        
+        return fig
+
+    generos =  {'Male': 1, 'Female': 2}
+    grados = {'Graduate School': 1, 'University': 2, 'High School': 3,'Others':4}
+    estados = {'Married':1, 'Single': 2, 'Others': 3}
+    hist_pagos = {'Pago Anticipado': -2, 'Pago a tiempo': -1, 'Pago atrasado': 0,
+                  '1 Mes de Retraso': 1,'2 Meses de Retraso': 2, '3 Meses de Retraso': 3,
+                  '4 Meses de Retraso': 4, '5 Meses de Retraso': 5,'6 Meses de Retraso': 6,
+                  '7 Meses de Retraso': 7, '8 Meses de Retraso': 8,}
+    
+    sexo = generos[sexo]
+    educacion = grados[educacion]
+    estado_civil = estados[estado_civil]
+    pay1 = hist_pagos[pay1]
+    pay2 = hist_pagos[pay2]
+    pay3 = hist_pagos[pay3]
+    pay4 = hist_pagos[pay4]
+    pay5 = hist_pagos[pay5]
+    pay6 = hist_pagos[pay6]
+
+    Xnew = [[valor_credito, sexo, educacion, estado_civil,edad,
+                      pay1,pay2,pay3,pay4,pay5,pay6,bill1,bill2,bill3,
+                      bill4,bill5,bill6,paya1,paya2,paya3,paya4,paya5,paya6]]
+    
+    ypred = model.predict(Xnew)  
+    prediccion = ypred[0]
+    prediccion = int(prediccion)
+    if prediccion == 0:
+        string = 'No Default'
+        background_color = 'blue'
+    elif prediccion == 1:
+        string = 'Default'
+        background_color = 'red'
+
+    fig = px.scatter()
+    fig.update_layout(
+        showlegend=False,
+        xaxis=dict(visible=False),
+        yaxis=dict(visible=False),
+        annotations=[
+            dict(
+                x=0.5,
+                y=0.5,
+                xref="paper",
+                yref="paper",
+                text=string,
+                font=dict(size=70, color='black', family='Jomolhari'),
+                showarrow=False,
+            )
+        ],
+        plot_bgcolor=background_color,
+        margin = dict(t=0, b=10, l=10, r=10),
+        height = 130
+    )
+
+
+    return fig
+
+
+
+
 app.layout = html.Div(children=[
     html.H1(children='Analisis Area de Riesgo', style=titulo_style),
 
@@ -270,8 +611,9 @@ app.layout = html.Div(children=[
 ])
 
 
-
 if __name__ == '__main__':
     app.run_server(debug=True, port=8040)
+
+
 
 
