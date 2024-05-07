@@ -15,7 +15,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
-env_path="C:\\Users\\gutil\\OneDrive - Universidad de los andes\\Escritorio\\Ingenieria Industrial\\2024-01\\Analitica Computacional Para la Toma de Decisiones\\Proyecto\\Proyecto 2\\env\\app.env"
+env_path = "C:\\Users\\gutil\\OneDrive - Universidad de los andes\\Escritorio\\Ingenieria Industrial\\2024-01\\Analitica Computacional Para la Toma de Decisiones\\Proyecto\\Proyecto 2\\env\\app.env"
 
 # load env 
 load_dotenv(dotenv_path=env_path)
@@ -261,7 +261,12 @@ def update_output_grafico(aspecto):
 #################################### Modelo Predictivo#######################################################
 #############################################################################################################
 
-model = joblib.load('modelo/modelo.pkl')
+
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+modelo_dir = os.path.join(script_dir, 'modelo')
+modelo_path = os.path.join(modelo_dir, 'modelo.pkl')
+model = joblib.load(modelo_path)
 
 tab2_layout = html.Div([
 
