@@ -15,12 +15,15 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
-env_path = "C:\\Users\\gutil\\OneDrive - Universidad de los andes\\Escritorio\\Ingenieria Industrial\\2024-01\\Analitica Computacional Para la Toma de Decisiones\\Proyecto\\Proyecto 2\\env\\app.env"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+env_path = os.path.join(script_dir, 'app.env')
+# env_path = os.path.join(env_path, 'app.env')
+
 
 # load env 
 load_dotenv(dotenv_path=env_path)
 # extract env variables
-USER=os.getenv('USER')
+USER='postgres'
 PASSWORD=os.getenv('PASSWORD')
 HOST=os.getenv('HOST')
 PORT=os.getenv('PORT')
@@ -264,9 +267,9 @@ def update_output_grafico(aspecto):
 
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-modelo_dir = os.path.join(script_dir, 'modelo')
-modelo_path = os.path.join(modelo_dir, 'modelo.pkl')
-model = joblib.load(modelo_path)
+modelo_dir = os.path.join(script_dir, 'modelo.pkl')
+# modelo_path = os.path.join(modelo_dir, 'modelo.pkl')
+model = joblib.load(modelo_dir)
 
 tab2_layout = html.Div([
 
@@ -617,7 +620,7 @@ app.layout = html.Div(children=[
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8040)
+    app.run_server(debug=True,  host  ='0.0.0.0')
 
 
 
